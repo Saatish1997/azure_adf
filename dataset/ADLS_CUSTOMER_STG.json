@@ -1,0 +1,19 @@
+{
+	"name": "ADLS_CUSTOMER_STG",
+	"properties": {
+		"description": "This will to blob storage ",
+		"linkedServiceName": {
+			"referenceName": "ADLS_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "landing"
+			}
+		},
+		"schema": {}
+	}
+}
