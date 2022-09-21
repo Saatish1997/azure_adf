@@ -30,23 +30,7 @@
 						}
 					},
 					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "SQL_DS_GENERIC",
-						"type": "DatasetReference",
-						"parameters": {
-							"schemaName": "saleslt",
-							"tableName": "Product"
-						}
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "CUSTOMER_STG_JSON",
-						"type": "DatasetReference"
-					}
-				]
+				}
 			},
 			{
 				"name": "PRODUCT COUNT",
@@ -73,10 +57,6 @@
 						"sqlReaderQuery": "SELECT COUNT(*) AS ProductCount FROM SALESLT.PRODUCT;",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
-					},
-					"dataset": {
-						"referenceName": "SQL_CUSTOMER_DS",
-						"type": "DatasetReference"
 					}
 				}
 			},
@@ -126,23 +106,7 @@
 									}
 								},
 								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "SQL_DS_GENERIC",
-									"type": "DatasetReference",
-									"parameters": {
-										"schemaName": "saleslt",
-										"tableName": "productdescription"
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "CUSTOMER_STG_JSON",
-									"type": "DatasetReference"
-								}
-							]
+							}
 						}
 					]
 				}
