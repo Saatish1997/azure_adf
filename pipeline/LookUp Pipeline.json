@@ -46,49 +46,17 @@
 					},
 					"ifFalseActivities": [
 						{
-							"name": "Get Product data",
-							"type": "Copy",
+							"name": "Calling Product Pipeline",
+							"type": "ExecutePipeline",
 							"dependsOn": [],
-							"policy": {
-								"timeout": "0.12:00:00",
-								"retry": 0,
-								"retryIntervalInSeconds": 30,
-								"secureOutput": false,
-								"secureInput": false
-							},
 							"userProperties": [],
 							"typeProperties": {
-								"source": {
-									"type": "AzureSqlSource",
-									"queryTimeout": "02:00:00",
-									"partitionOption": "None"
+								"pipeline": {
+									"referenceName": "Product Pipeline",
+									"type": "PipelineReference"
 								},
-								"sink": {
-									"type": "JsonSink",
-									"storeSettings": {
-										"type": "AzureBlobFSWriteSettings"
-									},
-									"formatSettings": {
-										"type": "JsonWriteSettings"
-									}
-								},
-								"enableStaging": false
-							},
-							"inputs": [
-								{
-									"referenceName": "SQL_PRODUCT_DS",
-									"type": "DatasetReference"
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "ADLS_CUSTOMER_STG",
-									"type": "DatasetReference",
-									"parameters": {
-										"filePath": "For_Each"
-									}
-								}
-							]
+								"waitOnCompletion": true
+							}
 						}
 					],
 					"ifTrueActivities": [
