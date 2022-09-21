@@ -1,0 +1,9 @@
+{
+	"name": "satishadf-demo",
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "9779e499-0142-4b8b-bc65-1a2cd9b3b5e8",
+		"tenantId": "8b652643-5faf-4500-96a2-ffdde62cf27a"
+	}
+}
