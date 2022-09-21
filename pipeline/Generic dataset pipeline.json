@@ -1,0 +1,58 @@
+{
+	"name": "Generic dataset pipeline",
+	"properties": {
+		"description": "This is to implement pipeline with generic dataset",
+		"activities": [
+			{
+				"name": "Generic Dataset",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "SQL_GENERIC_DS",
+						"type": "DatasetReference",
+						"parameters": {
+							"schemaName": "saleslt",
+							"tableName": "Customer"
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ADLS_CUSTOMER_STG",
+						"type": "DatasetReference",
+						"parameters": {
+							"filePath": "Customer_Table"
+						}
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}
