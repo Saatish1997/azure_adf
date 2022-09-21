@@ -40,7 +40,10 @@
 				"outputs": [
 					{
 						"referenceName": "ADLS_CUSTOMER_STG",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"filePath": "Customer"
+						}
 					}
 				]
 			}
