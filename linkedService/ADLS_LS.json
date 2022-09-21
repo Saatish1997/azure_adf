@@ -1,0 +1,13 @@
+{
+	"name": "ADLS_LS",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"description": "This is connect to my azure storage ",
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://satishdemostg.dfs.core.windows.net/",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQEEyRjUyRTg4LUMyODgtNDQ2MS04MjNGLTU5NzM0RkJCNUY2NF80YjIxNTY3Zi1iODk5LTQ3OTMtOTIxMC04MjY1ZDk4YjE2MTQiDQp9"
+		}
+	}
+}
