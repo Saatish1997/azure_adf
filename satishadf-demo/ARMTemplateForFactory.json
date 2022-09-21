@@ -70,7 +70,9 @@
 							{
 								"referenceName": "ADLS_CUSTOMER_STG",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"filePath": "Customer"
+								}
 							}
 						]
 					}
@@ -87,6 +89,74 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Generic dataset pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This is to implement pipeline with generic dataset",
+				"activities": [
+					{
+						"name": "Generic Dataset",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "SQL_GENERIC_DS",
+								"type": "DatasetReference",
+								"parameters": {
+									"schemaName": "saleslt",
+									"tableName": "Customer"
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "ADLS_CUSTOMER_STG",
+								"type": "DatasetReference",
+								"parameters": {
+									"filePath": "Customer_Table"
+								}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/SQL_GENERIC_DS')]",
+				"[concat(variables('factoryId'), '/datasets/ADLS_CUSTOMER_STG')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ADLS_CUSTOMER_STG')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -96,11 +166,20 @@
 					"referenceName": "ADLS_LS",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"filePath": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "Json",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"folderPath": {
+							"value": "@dataset().filePath",
+							"type": "Expression"
+						},
 						"fileSystem": "landing"
 					}
 				},
@@ -190,6 +269,41 @@
 				"typeProperties": {
 					"schema": "SalesLT",
 					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/SQL_DB_LS')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/SQL_GENERIC_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQL_DB_LS",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"schemaName": {
+						"type": "string"
+					},
+					"tableName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().schemaName",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@dataset().tableName",
+						"type": "Expression"
+					}
 				}
 			},
 			"dependsOn": [
