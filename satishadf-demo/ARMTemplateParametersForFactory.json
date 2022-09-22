@@ -5,23 +5,26 @@
 		"factoryName": {
 			"value": "satishadf-demo"
 		},
-		"ADLS_LS_accountKey": {
+		"ADLS_GEN2_LS_accountKey": {
 			"value": ""
 		},
-		"SQL_DB_LS_connectionString": {
+		"ADLS_LS_accountKey": {
 			"value": ""
 		},
 		"SQL_DB_GENERIC_LS_connectionString": {
 			"value": ""
 		},
-		"ADLS_GEN2_LS_accountKey": {
+		"SQL_DB_LS_connectionString": {
 			"value": ""
+		},
+		"ADLS_GEN2_LS_properties_typeProperties_url": {
+			"value": "https://satishdemoadls.dfs.core.windows.net/"
 		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"value": "https://satishdemostg.dfs.core.windows.net/"
 		},
-		"ADLS_GEN2_LS_properties_typeProperties_url": {
-			"value": "https://satishdemoadls.dfs.core.windows.net/"
+		"REST_LS_properties_typeProperties_url": {
+			"value": "https://restcountries.com/v3.1/all"
 		}
 	}
 }
