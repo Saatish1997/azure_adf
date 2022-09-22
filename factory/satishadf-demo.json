@@ -1,5 +1,13 @@
 {
 	"name": "satishadf-demo",
+	"properties": {
+		"globalParameters": {
+			"containerName": {
+				"type": "string",
+				"value": "landing"
+			}
+		}
+	},
 	"location": "eastus",
 	"identity": {
 		"type": "SystemAssigned",
