@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SQL_DB_LS'"
 		},
+		"SQL_DB_GENERIC_LS_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQL_DB_GENERIC_LS'"
+		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemostg.dfs.core.windows.net/"
@@ -51,6 +55,9 @@
 					},
 					"SQL_DB_LS_connectionString": {
 						"value": "[parameters('SQL_DB_LS_connectionString')]"
+					},
+					"SQL_DB_GENERIC_LS_connectionString": {
+						"value": "[parameters('SQL_DB_GENERIC_LS_connectionString')]"
 					},
 					"ADLS_LS_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_LS_properties_typeProperties_url')]"

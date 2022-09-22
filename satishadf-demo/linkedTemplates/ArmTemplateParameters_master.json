@@ -11,6 +11,9 @@
 		"SQL_DB_LS_connectionString": {
 			"value": ""
 		},
+		"SQL_DB_GENERIC_LS_connectionString": {
+			"value": ""
+		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"value": "https://satishdemostg.dfs.core.windows.net/"
 		},
