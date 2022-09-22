@@ -1,0 +1,47 @@
+{
+	"name": "SQL_DB_WITH_LS",
+	"properties": {
+		"description": "To implement generic linked service",
+		"linkedServiceName": {
+			"referenceName": "SQL_DB_GENERIC_LS",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"endPoint": {
+					"value": "@dataset().endPoint",
+					"type": "Expression"
+				},
+				"dbName": {
+					"value": "@dataset().dbName",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"tableName": {
+				"type": "string"
+			},
+			"schemaName": {
+				"type": "string"
+			},
+			"endPoint": {
+				"type": "string"
+			},
+			"dbName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().tableName",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().schemaName",
+				"type": "Expression"
+			}
+		}
+	}
+}
