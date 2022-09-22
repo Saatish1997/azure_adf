@@ -19,9 +19,17 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SQL_DB_GENERIC_LS'"
 		},
+		"ADLS_GEN2_LS_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ADLS_GEN2_LS'"
+		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemostg.dfs.core.windows.net/"
+		},
+		"ADLS_GEN2_LS_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://satishdemoadls.dfs.core.windows.net/"
 		},
 		"containerUri": {
 			"type": "string",
@@ -59,8 +67,14 @@
 					"SQL_DB_GENERIC_LS_connectionString": {
 						"value": "[parameters('SQL_DB_GENERIC_LS_connectionString')]"
 					},
+					"ADLS_GEN2_LS_accountKey": {
+						"value": "[parameters('ADLS_GEN2_LS_accountKey')]"
+					},
 					"ADLS_LS_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_LS_properties_typeProperties_url')]"
+					},
+					"ADLS_GEN2_LS_properties_typeProperties_url": {
+						"value": "[parameters('ADLS_GEN2_LS_properties_typeProperties_url')]"
 					}
 				}
 			},

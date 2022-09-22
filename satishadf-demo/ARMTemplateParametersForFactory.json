@@ -14,8 +14,14 @@
 		"SQL_DB_GENERIC_LS_connectionString": {
 			"value": ""
 		},
+		"ADLS_GEN2_LS_accountKey": {
+			"value": ""
+		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"value": "https://satishdemostg.dfs.core.windows.net/"
+		},
+		"ADLS_GEN2_LS_properties_typeProperties_url": {
+			"value": "https://satishdemoadls.dfs.core.windows.net/"
 		}
 	}
 }
