@@ -25,6 +25,9 @@
 		},
 		"REST_LS_properties_typeProperties_url": {
 			"value": "https://restcountries.com/v3.1/all"
+		},
+		"Rest_param_ls_properties_typeProperties_url": {
+			"value": "https://restcountries.com/v3.1/name"
 		}
 	}
 }
