@@ -1,0 +1,10 @@
+{
+	"name": "KEY_VAULT_LS",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://satishdemokeyvault.vault.azure.net/"
+		}
+	}
+}
