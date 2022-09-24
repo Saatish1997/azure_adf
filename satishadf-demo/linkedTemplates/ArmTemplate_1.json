@@ -1294,7 +1294,7 @@
 				],
 				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/landing/blobs/Trigger",
+					"blobPathBeginsWith": "/landing/blobs/",
 					"blobPathEndsWith": ".csv",
 					"ignoreEmptyBlobs": true,
 					"scope": "[parameters('Storage_trigger_properties_typeProperties_scope')]",
