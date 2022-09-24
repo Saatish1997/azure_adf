@@ -1273,11 +1273,10 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Incremental_pipeline_Trigger_every_minute')]",
+			"name": "[concat(parameters('factoryName'), '/Every_minute')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "This trigger will execute the pipeline every minute",
 				"annotations": [],
 				"runtimeState": "Started",
 				"pipelines": [
@@ -1294,8 +1293,8 @@
 					"recurrence": {
 						"frequency": "Minute",
 						"interval": 1,
-						"startTime": "2022-09-24T10:50:00",
-						"timeZone": "India Standard Time"
+						"startTime": "2022-09-24T05:24:00Z",
+						"timeZone": "UTC"
 					}
 				}
 			},
