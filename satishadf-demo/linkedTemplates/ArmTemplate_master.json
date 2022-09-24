@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SQL_DB_LS'"
 		},
+		"SQL_LS_USING_KEY_VAULT_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQL_LS_USING_KEY_VAULT'"
+		},
 		"ADLS_GEN2_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemoadls.dfs.core.windows.net/"
@@ -30,6 +34,10 @@
 		"ADLS_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemostg.dfs.core.windows.net/"
+		},
+		"KEY_VAULT_LS_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://satishdemokeyvault.vault.azure.net/"
 		},
 		"REST_LS_properties_typeProperties_url": {
 			"type": "string",
@@ -84,6 +92,9 @@
 					"ADLS_LS_properties_typeProperties_url": {
 						"value": "[parameters('ADLS_LS_properties_typeProperties_url')]"
 					},
+					"KEY_VAULT_LS_properties_typeProperties_baseUrl": {
+						"value": "[parameters('KEY_VAULT_LS_properties_typeProperties_baseUrl')]"
+					},
 					"REST_LS_properties_typeProperties_url": {
 						"value": "[parameters('REST_LS_properties_typeProperties_url')]"
 					},
@@ -107,6 +118,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"SQL_LS_USING_KEY_VAULT_connectionString": {
+						"value": "[parameters('SQL_LS_USING_KEY_VAULT_connectionString')]"
 					}
 				}
 			},

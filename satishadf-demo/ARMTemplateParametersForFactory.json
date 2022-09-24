@@ -17,11 +17,17 @@
 		"SQL_DB_LS_connectionString": {
 			"value": ""
 		},
+		"SQL_LS_USING_KEY_VAULT_connectionString": {
+			"value": ""
+		},
 		"ADLS_GEN2_LS_properties_typeProperties_url": {
 			"value": "https://satishdemoadls.dfs.core.windows.net/"
 		},
 		"ADLS_LS_properties_typeProperties_url": {
 			"value": "https://satishdemostg.dfs.core.windows.net/"
+		},
+		"KEY_VAULT_LS_properties_typeProperties_baseUrl": {
+			"value": "https://satishdemokeyvault.vault.azure.net/"
 		},
 		"REST_LS_properties_typeProperties_url": {
 			"value": "https://restcountries.com/v3.1/all"

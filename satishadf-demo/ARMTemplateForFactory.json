@@ -23,6 +23,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SQL_DB_LS'"
 		},
+		"SQL_LS_USING_KEY_VAULT_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'SQL_LS_USING_KEY_VAULT'"
+		},
 		"ADLS_GEN2_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemoadls.dfs.core.windows.net/"
@@ -30,6 +34,10 @@
 		"ADLS_LS_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://satishdemostg.dfs.core.windows.net/"
+		},
+		"KEY_VAULT_LS_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://satishdemokeyvault.vault.azure.net/"
 		},
 		"REST_LS_properties_typeProperties_url": {
 			"type": "string",
@@ -259,6 +267,220 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/SQL_GENERIC_DS')]",
 				"[concat(variables('factoryId'), '/datasets/ADLS_CUSTOMER_STG')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Incremental_pipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "This pipeline will execute incremental pipeline",
+				"activities": [
+					{
+						"name": "Get Highwatermark Date",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": true,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"dataset": {
+								"referenceName": "Highwatermark_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Fetch the latest timestamp from datatbase",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Get Highwatermark Date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "select max(ModifiedDate) as RecordDate from saleslt.customer;",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SQL_DB_CUSTOMER",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					},
+					{
+						"name": "Copy incremental data",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Fetch the latest timestamp from datatbase",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('select * from saleslt.customer where ModifiedDate >''',activity('Get Highwatermark Date').output.firstRow.Prop_0,''' AND ModifiedDate <=''',activity('Fetch the latest timestamp from datatbase').output.firstRow.RecordDate,'''')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SQL_DB_CUSTOMER",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "REST_CSV_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Update Highwater File",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy incremental data",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@concat('select ''' ,activity('Fetch the latest timestamp from datatbase').output.firstRow.RecordDate , ''' from saleslt.customer where customerid=1')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".txt"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SQL_DB_CUSTOMER",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Highwatermark_DS",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Highwatermark_DS')]",
+				"[concat(variables('factoryId'), '/datasets/SQL_DB_CUSTOMER')]",
+				"[concat(variables('factoryId'), '/datasets/REST_CSV_DS')]"
 			]
 		},
 		{
@@ -1343,6 +1565,38 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Highwatermark_DS')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "ADLS_GEN2_LS",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobFSLocation",
+						"fileName": "Highwatermark.txt",
+						"folderPath": "Rest_output",
+						"fileSystem": "raw"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": [
+					{
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ADLS_GEN2_LS')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/REST_CSV_DS')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -1731,6 +1985,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/KEY_VAULT_LS')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('KEY_VAULT_LS_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/REST_LS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -1797,249 +2064,57 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Incremental_pipeline')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/SQL_LS_USING_KEY_VAULT')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"description": "This pipeline will execute incremental pipeline",
-				"activities": [
-					{
-						"name": "Get Highwatermark Date",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('SQL_LS_USING_KEY_VAULT_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "KEY_VAULT_LS",
+							"type": "LinkedServiceReference"
 						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobFSReadSettings",
-									"recursive": true,
-									"enablePartitionDiscovery": false
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"dataset": {
-								"referenceName": "Highwatermark_DS",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "Fetch the latest timestamp from datatbase",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Get Highwatermark Date",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "select max(ModifiedDate) as RecordDate from saleslt.customer;",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "SQL_DB_CUSTOMER",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						}
-					},
-					{
-						"name": "Copy incremental data",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Fetch the latest timestamp from datatbase",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "@concat('select * from saleslt.customer where ModifiedDate >''',activity('Get Highwatermark Date').output.firstRow.Prop_0,''' AND ModifiedDate <=''',activity('Fetch the latest timestamp from datatbase').output.firstRow.RecordDate,'''')",
-									"type": "Expression"
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SQL_DB_CUSTOMER",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "REST_CSV_DS",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Update Highwater File",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Copy incremental data",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": {
-									"value": "@concat('select ''' ,activity('Fetch the latest timestamp from datatbase').output.firstRow.RecordDate , ''' from saleslt.customer where customerid=1')",
-									"type": "Expression"
-								},
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobFSWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "SQL_DB_CUSTOMER",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "Highwatermark_DS",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
+						"secretName": "dbpassword"
 					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/Highwatermark_DS')]",
-				"[concat(variables('factoryId'), '/datasets/SQL_DB_CUSTOMER')]",
-				"[concat(variables('factoryId'), '/datasets/REST_CSV_DS')]"
+				"[concat(variables('factoryId'), '/linkedServices/KEY_VAULT_LS')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Highwatermark_DS')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
+			"name": "[concat(parameters('factoryName'), '/Incremental_pipeline_Trigger_every_minute')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"linkedServiceName": {
-					"referenceName": "ADLS_GEN2_LS",
-					"type": "LinkedServiceReference"
-				},
+				"description": "This trigger will execute the pipeline every minute",
 				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "Highwatermark.txt",
-						"folderPath": "Rest_output",
-						"fileSystem": "raw"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"quoteChar": "\""
-				},
-				"schema": [
+				"runtimeState": "Started",
+				"pipelines": [
 					{
-						"type": "String"
+						"pipelineReference": {
+							"referenceName": "Incremental_pipeline",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
 					}
-				]
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Minute",
+						"interval": 15,
+						"startTime": "2022-09-24T10:50:00",
+						"timeZone": "India Standard Time"
+					}
+				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/ADLS_GEN2_LS')]"
+				"[concat(variables('factoryId'), '/pipelines/Incremental_pipeline')]"
 			]
 		}
 	]
