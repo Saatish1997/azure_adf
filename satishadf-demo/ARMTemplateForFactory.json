@@ -46,6 +46,10 @@
 		"Rest_param_ls_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://restcountries.com/v3.1/name"
+		},
+		"Storage_trigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/d687f668-4235-4eca-9d07-b26a9a18ca5d/resourceGroups/Satishdemo/providers/Microsoft.Storage/storageAccounts/satishdemoadls"
 		}
 	},
 	"variables": {
@@ -2087,12 +2091,12 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Every_minute')]",
+			"name": "[concat(parameters('factoryName'), '/Storage_trigger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -2102,14 +2106,15 @@
 						"parameters": {}
 					}
 				],
-				"type": "ScheduleTrigger",
+				"type": "BlobEventsTrigger",
 				"typeProperties": {
-					"recurrence": {
-						"frequency": "Minute",
-						"interval": 1,
-						"startTime": "2022-09-24T05:24:00Z",
-						"timeZone": "UTC"
-					}
+					"blobPathBeginsWith": "/landing/blobs/Trigger",
+					"blobPathEndsWith": ".csv",
+					"ignoreEmptyBlobs": true,
+					"scope": "[parameters('Storage_trigger_properties_typeProperties_scope')]",
+					"events": [
+						"Microsoft.Storage.BlobCreated"
+					]
 				}
 			},
 			"dependsOn": [

@@ -35,6 +35,9 @@
 		"Rest_param_ls_properties_typeProperties_url": {
 			"value": "https://restcountries.com/v3.1/name"
 		},
+		"Storage_trigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/d687f668-4235-4eca-9d07-b26a9a18ca5d/resourceGroups/Satishdemo/providers/Microsoft.Storage/storageAccounts/satishdemoadls"
+		},
 		"containerUri": {
 			"value": ""
 		},
