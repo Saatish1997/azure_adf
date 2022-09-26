@@ -10,10 +10,6 @@
 		"SQL_LS_USING_KEY_VAULT_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'SQL_LS_USING_KEY_VAULT'"
-		},
-		"Storage_trigger_properties_typeProperties_scope": {
-			"type": "string",
-			"defaultValue": "/subscriptions/d687f668-4235-4eca-9d07-b26a9a18ca5d/resourceGroups/Satishdemo/providers/Microsoft.Storage/storageAccounts/satishdemoadls"
 		}
 	},
 	"variables": {
@@ -1277,30 +1273,31 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Storage_trigger')]",
+			"name": "[concat(parameters('factoryName'), '/Tumbling_Tirgger')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"annotations": [],
 				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "Incremental_pipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "BlobEventsTrigger",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "Incremental_pipeline",
+						"type": "PipelineReference"
+					},
+					"parameters": {}
+				},
+				"type": "TumblingWindowTrigger",
 				"typeProperties": {
-					"blobPathBeginsWith": "/landing/blobs/",
-					"blobPathEndsWith": ".txt",
-					"ignoreEmptyBlobs": true,
-					"scope": "[parameters('Storage_trigger_properties_typeProperties_scope')]",
-					"events": [
-						"Microsoft.Storage.BlobCreated"
-					]
+					"frequency": "Minute",
+					"interval": 6,
+					"startTime": "2022-09-26T05:40:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 5,
+					"retryPolicy": {
+						"count": 3,
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
 				}
 			},
 			"dependsOn": [
