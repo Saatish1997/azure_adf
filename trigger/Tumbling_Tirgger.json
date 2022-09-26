@@ -2,7 +2,7 @@
 	"name": "Tumbling_Tirgger",
 	"properties": {
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipeline": {
 			"pipelineReference": {
 				"referenceName": "Incremental_pipeline",
