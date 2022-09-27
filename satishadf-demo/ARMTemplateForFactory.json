@@ -1141,7 +1141,7 @@
 										"sink": {
 											"name": "emp_name",
 											"type": "String",
-											"physicalType": "varchar"
+											"physicalType": "nvarchar"
 										}
 									},
 									{
@@ -1153,7 +1153,7 @@
 										"sink": {
 											"name": "emp_address",
 											"type": "String",
-											"physicalType": "varchar"
+											"physicalType": "nvarchar"
 										}
 									}
 								],
@@ -1720,7 +1720,20 @@
 					"firstRowAsHeader": true,
 					"quoteChar": "\""
 				},
-				"schema": []
+				"schema": [
+					{
+						"name": "id",
+						"type": "String"
+					},
+					{
+						"name": "emp_name",
+						"type": "String"
+					},
+					{
+						"name": "emp_address",
+						"type": "String"
+					}
+				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/ADLS_GEN2_LS')]"

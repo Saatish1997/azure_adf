@@ -971,7 +971,7 @@
 										"sink": {
 											"name": "emp_name",
 											"type": "String",
-											"physicalType": "varchar"
+											"physicalType": "nvarchar"
 										}
 									},
 									{
@@ -983,7 +983,7 @@
 										"sink": {
 											"name": "emp_address",
 											"type": "String",
-											"physicalType": "varchar"
+											"physicalType": "nvarchar"
 										}
 									}
 								],
