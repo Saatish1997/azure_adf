@@ -24,6 +24,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -95,34 +96,8 @@
 													"fileExtension": ".txt"
 												}
 											},
-											"enableStaging": false,
-											"translator": {
-												"type": "TabularTranslator",
-												"typeConversion": true,
-												"typeConversionSettings": {
-													"allowDataTruncation": true,
-													"treatBooleanAsNumber": false
-												}
-											}
-										},
-										"inputs": [
-											{
-												"referenceName": "CSV_SOUREC_FLDR",
-												"type": "DatasetReference",
-												"parameters": {
-													"fileName": {
-														"value": "@item().name",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "CSV_DEST_FLDR",
-												"type": "DatasetReference"
-											}
-										]
+											"enableStaging": false
+										}
 									}
 								]
 							}

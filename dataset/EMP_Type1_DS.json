@@ -1,0 +1,30 @@
+{
+	"name": "EMP_Type1_DS",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQL_DB_LS",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "emp_name",
+				"type": "varchar"
+			},
+			{
+				"name": "emp_address",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "employee_type1"
+		}
+	}
+}
