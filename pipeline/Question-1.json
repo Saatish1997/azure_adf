@@ -75,29 +75,33 @@
 										"userProperties": [],
 										"typeProperties": {
 											"source": {
-												"type": "DelimitedTextSource",
-												"storeSettings": {
-													"type": "AzureBlobFSReadSettings",
-													"recursive": true,
-													"enablePartitionDiscovery": false
-												},
-												"formatSettings": {
-													"type": "DelimitedTextReadSettings"
-												}
+												"type": "AzureSqlSource",
+												"queryTimeout": "02:00:00",
+												"partitionOption": "None"
 											},
 											"sink": {
-												"type": "DelimitedTextSink",
+												"type": "JsonSink",
 												"storeSettings": {
 													"type": "AzureBlobFSWriteSettings"
 												},
 												"formatSettings": {
-													"type": "DelimitedTextWriteSettings",
-													"quoteAllText": true,
-													"fileExtension": ".txt"
+													"type": "JsonWriteSettings"
 												}
 											},
 											"enableStaging": false
-										}
+										},
+										"inputs": [
+											{
+												"referenceName": "SQL_DB_CUSTOMER",
+												"type": "DatasetReference"
+											}
+										],
+										"outputs": [
+											{
+												"referenceName": "ADLS_CUSTOMER_STG",
+												"type": "DatasetReference"
+											}
+										]
 									}
 								]
 							}
